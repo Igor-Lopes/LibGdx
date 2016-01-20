@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="20" tilewidth="32" tileheight="32" nextobjectid="57">
+ <tileset firstgid="1" name="Pa1_nohara" tilewidth="32" tileheight="32">
+  <image source="../assets/Pa1_nohara.png" width="384" height="384"/>
+ </tileset>
+ <tileset firstgid="145" name="Game Boy Advance - Super Mario Advance 4 Super Mario Bros 3 - Tiles" tilewidth="32" tileheight="32">
+  <image source="../assets/Game Boy Advance - Super Mario Advance 4 Super Mario Bros 3 - Tiles.png" width="982" height="452"/>
+ </tileset>
+ <layer name="main" width="15" height="20">
+  <data encoding="base64" compression="zlib">
+   eJyLY2RgiBvFo3gUjzjMzMDAwALErEDMxoDgx6OpQ5cH8fmBWACN5seiVxBJDYgtRKFeAODsZKc=
+  </data>
+ </layer>
+ <objectgroup color="#ff0000" name="hole"/>
+ <objectgroup color="#00aa00" name="ground">
+  <object id="53" x="1" y="545" width="192" height="95"/>
+  <object id="54" x="197" y="579" width="121" height="60"/>
+  <object id="55" x="321" y="385" width="145" height="30"/>
+  <object id="56" x="321" y="547" width="157" height="91"/>
+ </objectgroup>
+</map>

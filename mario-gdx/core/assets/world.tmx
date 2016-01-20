@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="40" tilewidth="16" tileheight="16" nextobjectid="4">
+ <tileset firstgid="1" name="Game Boy Advance - Super Mario Advance 4 Super Mario Bros 3 - Tiles" tilewidth="16" tileheight="16">
+  <image source="../gamedev/assets/Game Boy Advance - Super Mario Advance 4 Super Mario Bros 3 - Tiles.png" width="982" height="452"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="30" height="40">
+  <data encoding="base64" compression="zlib">
+   eJzdV8sOwyAMq9R7Wb+rW///c8oOSFZEnsDKerCmSiyJbSDkWJflcGITkDJeGXvGqWCHtRwwtqUmzF9+y5q3UrsGjG2tuTUPx62mb03PqKccV87LD/lu1SCq1y/zevaG94yhL1Lsu3hG+bTocCdqHkS/LXfISH8td/QTPfTogh7RPjKTLtaeRLlEY3j3Lo0d5e15V9R6Zi1OT284DXt7bKkvBXjOcF69e7lnj50d0jl6ct/tdU7+SaO0ynftKI4bk68FlAPOCehZi9clnpZbup9HeW2dTaT+1rtOrqZRc5TWG79zedkX0vvBylvjgTMM5ub2kfVd7tWPyy/VYIkZAVeHVk/5P6716OnVhca8ALq4rQM=
+  </data>
+ </layer>
+ <objectgroup color="#aa0000" name="ground">
+  <object id="1" x="2" y="512" width="181" height="127"/>
+  <object id="3" x="304" y="514" width="175" height="128"/>
+ </objectgroup>
+</map>

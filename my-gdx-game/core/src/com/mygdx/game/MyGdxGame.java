@@ -115,6 +115,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
         float h = Gdx.graphics.getHeight()/PIXELS_TO_METERS- 50/PIXELS_TO_METERS; // -50 to be visible here
         //bodyDef2.position.set(0,
 //                h-10/PIXELS_TO_METERS);
+        System.out.println(Gdx.graphics.getWidth() + " " + Gdx.graphics.getHeight());
         bodyDef2.position.set(0,0);
         FixtureDef fixtureDef2 = new FixtureDef();
         EdgeShape edgeShape = new EdgeShape(); // Creates an edge
@@ -140,7 +141,7 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
     @Override
     public void render() {
     	
-    	System.out.println("Body's mass: " + body.getMass() + " kg");
+    	//System.out.println("Body's mass: " + body.getMass() + " kg");
         camera.update();
         // Step the physics simulation forward at a rate of 60hz
         world.step(1f/60f, 6, 2);
