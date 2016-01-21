@@ -135,6 +135,34 @@ public class MyGdxGame extends ApplicationAdapter implements InputProcessor {
         font.setColor(Color.BLACK);
         camera = new OrthographicCamera(Gdx.graphics.getWidth(),Gdx.graphics.
                 getHeight());
+        
+        world.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                // Check to see if the collision is between the second sprite and the bottom of the screen
+                // If so apply a random amount of upward force to both objects... just because
+                if(contact.getFixtureA().getBody() == body && 
+                		contact.getFixtureB().getBody() == bodypipe){
+                	System.out.println("Collision with pipe");
+
+                    
+                }
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {
+            }
+
+			@Override
+			public void postSolve(Contact contact, ContactImpulse impulse) {
+				// TODO Auto-generated method stub
+				
+			}
+        });
     }
 
     private float elapsed = 0;

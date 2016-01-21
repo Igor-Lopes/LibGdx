@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="40" tilewidth="16" tileheight="16" nextobjectid="4">
- <tileset firstgid="1" name="Game Boy Advance - Super Mario Advance 4 Super Mario Bros 3 - Tiles" tilewidth="16" tileheight="16">
-  <image source="../gamedev/assets/Game Boy Advance - Super Mario Advance 4 Super Mario Bros 3 - Tiles.png" width="982" height="452"/>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="25" height="20" tilewidth="32" tileheight="32" nextobjectid="17">
+ <tileset firstgid="1" name="ground" tilewidth="32" tileheight="32">
+  <image source="../tiled/ground.jpeg" width="102" height="204"/>
  </tileset>
- <layer name="Tile Layer 1" width="30" height="40">
+ <tileset firstgid="19" name="bkg3" tilewidth="32" tileheight="32">
+  <image source="../tiled/bkg3.png" width="1024" height="864"/>
+ </tileset>
+ <layer name="Tile Layer 1" width="25" height="20">
   <data encoding="base64" compression="zlib">
-   eJzdV8sOwyAMq9R7Wb+rW///c8oOSFZEnsDKerCmSiyJbSDkWJflcGITkDJeGXvGqWCHtRwwtqUmzF9+y5q3UrsGjG2tuTUPx62mb03PqKccV87LD/lu1SCq1y/zevaG94yhL1Lsu3hG+bTocCdqHkS/LXfISH8td/QTPfTogh7RPjKTLtaeRLlEY3j3Lo0d5e15V9R6Zi1OT284DXt7bKkvBXjOcF69e7lnj50d0jl6ct/tdU7+SaO0ynftKI4bk68FlAPOCehZi9clnpZbup9HeW2dTaT+1rtOrqZRc5TWG79zedkX0vvBylvjgTMM5ub2kfVd7tWPyy/VYIkZAVeHVk/5P6716OnVhca8ALq4rQM=
+   eJzV1DVQFgAYBuCfNEfsxCZGuwt7xKRthdFubJFRMMBO1BG7xdYRu0UE0RELEX28c9NTVodnfO+9e+++b05QIDCXecxnAQtZxGKWsJRlLGcFmaxkFatZw1rWsZ4NZLGRbDaRQy6b2cJWtpFHPtvZwU52sZs97GUf+znAQQ5RwGGOcJRCjnGcE5zkFKc5w1nOcZ4LXOQSlyniCle5xnVucJNb3OYOxdzlHvd5wEMe8ZgnPOUZz3nBS15RwmtKeUMZ5bylgne8p5IPfOQTn/lCFV+p5hs1fCcQHAgEEUwIoYQRTh3qUo/6NKAhETSiMU1oSjOa04KWtKI1bWhLJO1oTwc60onOdCGKaGKIpSvd6E4PetKL3vShL/3ozwAGMojBDGEocQxjOCMYyShGM4Z4xjKO8UxgIpNIIJEkkkkhlTQmM4WpTGM6M5jJLGaTTgZzmMs85rOAhSxiMUtYyjKWs4JMVrKK1axhLetYzway2Eg2m8ghl81sYSvbyCOf7exgJ7vYzR72so/9HOAghyjgMEc4SiHHOM4JTnKK05zhLOc4zwUuconLFHGFq1zjOje4yS1uc4di7nKP+zzgIY94zBOe8oznvOAlryjhNaW8oYxy3lLBO95TyQc+8onPfKGKr1TzjRq+EwhxHwQTQihhhFOHutSjPg1oSASNaEwTmtKM5rSgJa1oTRvaEkk72tOBjnSiM12IIpoYYulKN7rTg570ojd96Es/+jOAgQxiMEMYShzDGM4IRjKK0YwhnrGMYzwTmMgkEkgkiWRSSCWNyUxhKtOYzgxmMovZpJPxc9vAv6WG/K42uV/vLRBaC3/qqE0ujPD/rCPsLz0/AB6o0tI=
   </data>
  </layer>
- <objectgroup color="#aa0000" name="ground">
-  <object id="1" x="2" y="512" width="181" height="127"/>
-  <object id="3" x="304" y="514" width="175" height="128"/>
+ <objectgroup name="ground">
+  <object id="4" x="1" y="514" width="286" height="124"/>
+  <object id="5" x="449" y="514" width="351" height="126"/>
+ </objectgroup>
+ <objectgroup color="#aa0000" name="fall">
+  <object id="16" x="320" y="516" width="98" height="123"/>
  </objectgroup>
 </map>
