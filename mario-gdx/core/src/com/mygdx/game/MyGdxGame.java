@@ -210,6 +210,7 @@ public class MyGdxGame extends ApplicationAdapter {
                     if (contact.getFixtureA().getBody() == marioBody && contact.getFixtureB().getBody() == b) {
                         bodyTrash.add(b);
                         marioState = State.dead;
+
                     }
                 }
                 for (Body b : ground) {
@@ -226,7 +227,7 @@ public class MyGdxGame extends ApplicationAdapter {
                 for (Body b : ground) {
                     if (contact.getFixtureA().getBody() == marioBody && contact.getFixtureB().getBody() == b
                             && marioState != State.dead) {
-                        System.out.println("saiu");
+                        
                     }
                 }
 
@@ -272,6 +273,7 @@ public class MyGdxGame extends ApplicationAdapter {
                 && marioState != State.jumping) {
             if(marioState == State.walking){
                 marioBody.applyForceToCenter(0f,28000f,true);
+
                 marioState = State.jumping;
                 onGround = false;
             }
@@ -362,7 +364,7 @@ public class MyGdxGame extends ApplicationAdapter {
         font.draw(batch, "Debug: ", 0, 0);
         batch.end();
 
-        //debugRenderer.render(world, debugMatrix);
+        debugRenderer.render(world, debugMatrix);
     }
 
     public void debug() {
