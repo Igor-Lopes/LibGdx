@@ -25,17 +25,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.Manifold;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.physics.box2d.*;
+
 
 public class MyGdxGame extends ApplicationAdapter {
     // Screen and world variables
@@ -49,8 +40,6 @@ public class MyGdxGame extends ApplicationAdapter {
     Box2DDebugRenderer debugRenderer;
     Matrix4 debugMatrix;
     Music music;
-    Music jumping;
-    Music dying;
     BitmapFont font;
     float h;
     float w;
@@ -70,13 +59,17 @@ public class MyGdxGame extends ApplicationAdapter {
     enum Direction {left, right}
     State marioState;
     Direction marioDir;
-
-    boolean onGround;
+    boolean moveToRight;
+    boolean moveToLeft;
+  //  boolean isGrounded;
     // Other Variables
     ArrayList<Body> falls;
+    ArrayList<Body> platforms;
     ArrayList<Body> bodyTrash;
     ArrayList<Body> ground;
-
+    Vector2 test = new Vector2();
+    boolean main = true;
+    boolean bottom = false;
     @Override
     public void create() {
         //Initializing World and screen variables
@@ -84,7 +77,7 @@ public class MyGdxGame extends ApplicationAdapter {
         batch = new SpriteBatch();
         w = Gdx.graphics.getWidth(); // width of the screen
         h = Gdx.graphics.getHeight();// height of the screen
-        tiledMap = new TmxMapLoader().load("world.tmx");
+        tiledMap = new TmxMapLoader().load("world_new.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         camera = new OrthographicCamera();// camera
         camera.setToOrtho(false, w, h);
@@ -93,7 +86,7 @@ public class MyGdxGame extends ApplicationAdapter {
         music = Gdx.audio.newMusic(Gdx.files.internal("theme.mp3"));
         music.setVolume(0.2f);
         music.setLooping(true);
-        music.play();
+        //music.play();
         font = new BitmapFont();
         font.setColor(Color.ORANGE);
         stateTime = 0;
@@ -111,7 +104,7 @@ public class MyGdxGame extends ApplicationAdapter {
         }
 
         marioSprite = new Sprite(tmpFrames[0][0]);
-        marioSprite.setPosition(0, 225);
+        marioSprite.setPosition(100, 225);
         walkingRight = new Animation(1/10f, animationFrame);
 
         animationFrame = new TextureRegion[3];
@@ -123,18 +116,19 @@ public class MyGdxGame extends ApplicationAdapter {
             }
         }
 
-
         walkingLeft = new Animation(1/10f, animationFrame);
 
         currAnimation = walkingRight;
         play = true;
-        marioState = State.spawn;
+        marioState = State.idle;
         marioDir = Direction.right;
-        onGround = false;
+        moveToRight = true;
+        moveToLeft = true;
 
         PolygonShape shape = new PolygonShape();
         BodyDef bodyDefMario = new BodyDef();
         bodyDefMario.type = BodyDef.BodyType.DynamicBody;
+
         bodyDefMario.position.set((marioSprite.getX() + marioSprite.getWidth() / 2) / pixelsToMeters,
                 (marioSprite.getY() + marioSprite.getHeight() / 2) / pixelsToMeters);
         marioBody = world.createBody(bodyDefMario);
@@ -145,17 +139,55 @@ public class MyGdxGame extends ApplicationAdapter {
         fixtureMario.density = 700f;
         fixtureMario.restitution = 0;
         fixtureMario.friction = 1;
-        marioBody.createFixture(fixtureMario);
+        Fixture [] sides = new Fixture[4];
+        sides[0] = marioBody.createFixture(fixtureMario);
         marioBody.setFixedRotation(true);
+
+        //Right Side Sensor
+        fixtureMario = new FixtureDef();
+        shape = new PolygonShape();
+        //shape.setAsBox(marioSprite.getWidth() / 16 / pixelsToMeters,marioSprite.getHeight() * 0.4f / pixelsToMeters,
+        //   new Vector2(0.20f,0), 0);
+
+        shape.setAsBox(marioSprite.getWidth() / 16 / pixelsToMeters,marioSprite.getHeight() * 0.45f / pixelsToMeters,
+                new Vector2(0.20f,0), 0);
+        fixtureMario.isSensor = true;
+        fixtureMario.shape = shape;
+
+
+        sides[1] = marioBody.createFixture(fixtureMario);
+        //Left Side Sensor
+        fixtureMario = new FixtureDef();
+        shape = new PolygonShape();
+        //shape.setAsBox(marioSprite.getWidth() / 16 / pixelsToMeters,marioSprite.getHeight() * 0.4f / pixelsToMeters,
+        //   new Vector2(0.20f,0), 0);
+        shape.setAsBox(marioSprite.getWidth() / 16 / pixelsToMeters,marioSprite.getHeight() * 0.45f / pixelsToMeters,
+                new Vector2(-0.20f,0), 0);
+        fixtureMario.isSensor = true;
+        fixtureMario.shape = shape;
+        sides[2] = marioBody.createFixture(fixtureMario);
+        // Bottom
+        fixtureMario = new FixtureDef();
+        shape = new PolygonShape();
+        //shape.setAsBox(marioSprite.getWidth() / 16 / pixelsToMeters,marioSprite.getHeight() * 0.4f / pixelsToMeters,
+        //   new Vector2(0.20f,0), 0);
+        shape.setAsBox(marioSprite.getWidth() /4f / pixelsToMeters,marioSprite.getHeight() /4 / pixelsToMeters,
+                new Vector2(0,-0.20f), 0);
+        fixtureMario.isSensor = true;
+        fixtureMario.shape = shape;
+        sides[3] = marioBody.createFixture(fixtureMario);
+
+        marioBody.setUserData(sides);
 
         //Other
         falls = new ArrayList<Body>();
+        platforms = new ArrayList<Body>();
         bodyTrash = new ArrayList<Body>();
         ground = new ArrayList<Body>();
         createGround();
         createFalls();
+        createPlatforms();
         setCollisions();
-
     }
 
     public void createGround() { // Creates Ground bodies
@@ -174,10 +206,13 @@ public class MyGdxGame extends ApplicationAdapter {
             // and divide by 2 so it can center it properly
             bodyDef.position.set((r.x + r.width * 0.5f) / pixelsToMeters, (r.y + r.height * 0.5f) / pixelsToMeters);
             body = world.createBody(bodyDef);
-            shape.setAsBox(r.getWidth() * 0.5f / pixelsToMeters, r.getHeight() * 0.5f / pixelsToMeters);
 
+            shape.setAsBox(r.getWidth() * 0.5f / pixelsToMeters, r.getHeight() * 0.5f / pixelsToMeters);
             fixtureDef.shape = shape;
-            body.createFixture(fixtureDef);
+            fixtureDef.friction = 1;
+            Fixture f = body.createFixture(fixtureDef);
+
+            body.setUserData(f);
             ground.add(body);
         }
     }
@@ -197,8 +232,32 @@ public class MyGdxGame extends ApplicationAdapter {
             body = world.createBody(bodyDef);
             shape.setAsBox(r.getWidth() * 0.5f / pixelsToMeters, r.getHeight() * 0.5f / pixelsToMeters);
             fixtureDef.shape = shape;
+            fixtureDef.isSensor = true;
             body.createFixture(fixtureDef);
             falls.add(body);
+        }
+    }
+
+    public void createPlatforms() { // Creates Platforms
+        layer = tiledMap.getLayers().get("platforms");
+        objects = layer.getObjects();
+        Body body;
+        BodyDef bodyDef = new BodyDef();
+        FixtureDef fixtureDef = new FixtureDef();
+        PolygonShape shape = new PolygonShape();
+
+        for (int i = 0; i < objects.getCount(); i++) {
+            RectangleMapObject rmp = (RectangleMapObject) objects.get(i);
+            Rectangle r = rmp.getRectangle();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+            bodyDef.position.set((r.x + r.width * 0.5f) / pixelsToMeters, (r.y + r.height * 0.5f) / pixelsToMeters);
+            body = world.createBody(bodyDef);
+            shape.setAsBox(r.getWidth() * 0.5f / pixelsToMeters, r.getHeight() * 0.5f / pixelsToMeters);
+            fixtureDef.shape = shape;
+            fixtureDef.friction = 1;
+            Fixture f = body.createFixture(fixtureDef);
+            body.setUserData(f);
+            platforms.add(body);
         }
     }
 
@@ -206,31 +265,72 @@ public class MyGdxGame extends ApplicationAdapter {
         world.setContactListener(new ContactListener() {
             @Override
             public void beginContact(Contact contact) {
-                for (Body b : falls) {
-                    if (contact.getFixtureA().getBody() == marioBody && contact.getFixtureB().getBody() == b) {
-                        bodyTrash.add(b);
-                        marioState = State.dead;
-
+                Fixture [] sides = (Fixture[]) marioBody.getUserData();
+                for (Body b : platforms) {
+                    if(contact.getFixtureA() == sides[0] && contact.getFixtureB() == b.getUserData()){
+                        main = true;
+                    }
+                    if(contact.getFixtureA() == sides[3] && contact.getFixtureB() == b.getUserData()){
+                        bottom = true;
+                        marioState = State.idle;
+                    }
+                    if(contact.getFixtureA() == sides[1] && contact.getFixtureB() == b.getUserData()){
+                        moveToRight = false;
+                    }
+                    if(contact.getFixtureA() == sides[2] && contact.getFixtureB() == b.getUserData()){
+                        moveToLeft = false;
                     }
                 }
                 for (Body b : ground) {
-                    if (contact.getFixtureA().getBody() == marioBody && contact.getFixtureB().getBody() == b
-                            && marioState != State.dead) {
-                        onGround = true;
+                    if(contact.getFixtureA() == sides[0] && contact.getFixtureB() == b.getUserData()){
+                        main = true;
+                    }
+                    if(contact.getFixtureA() == sides[3] && contact.getFixtureB() == b.getUserData()){
+                        bottom = true;
                         marioState = State.idle;
+                    }
+                    if(contact.getFixtureA() == sides[1] && contact.getFixtureB() == b.getUserData()){
+                        moveToRight = false;
+                    }
+                    if(contact.getFixtureA() == sides[2] && contact.getFixtureB() == b.getUserData()){
+                        moveToLeft = false;
                     }
                 }
             }
-
             @Override
             public void endContact(Contact contact) {
+                Fixture [] sides = (Fixture[]) marioBody.getUserData();
+
                 for (Body b : ground) {
-                    if (contact.getFixtureA().getBody() == marioBody && contact.getFixtureB().getBody() == b
-                            && marioState != State.dead) {
-                        
+                    if(contact.getFixtureA() == sides[0] && contact.getFixtureB() == b.getUserData()){
+                        main = false;
+                    }
+                    if(contact.getFixtureA() == sides[3] && contact.getFixtureB() == b.getUserData() && moveToLeft && moveToRight){
+                        bottom = false;
+                        marioState = State.jumping;
+                    }
+                    if(contact.getFixtureA() == sides[1] && contact.getFixtureB() == b.getUserData()){
+                        moveToRight = true;
+                    }
+                    if(contact.getFixtureA() == sides[2] && contact.getFixtureB() == b.getUserData()){
+                        moveToLeft = true;
                     }
                 }
-
+                for (Body b : platforms) {
+                    if(contact.getFixtureA() == sides[0] && contact.getFixtureB() == b.getUserData()){
+                        main = false;
+                    }
+                    if(contact.getFixtureA() == sides[3] && contact.getFixtureB() == b.getUserData() && moveToLeft && moveToRight){
+                        bottom = false;
+                        marioState = State.jumping;
+                    }
+                    if(contact.getFixtureA() == sides[1] && contact.getFixtureB() == b.getUserData()){
+                        moveToRight = true;
+                    }
+                    if(contact.getFixtureA() == sides[2] && contact.getFixtureB() == b.getUserData()){
+                        moveToLeft = true;
+                    }
+                }
             }
 
             @Override
@@ -246,49 +346,50 @@ public class MyGdxGame extends ApplicationAdapter {
     }
 
     public void keyBoard() {
-        if(marioBody.getLinearVelocity().isZero() && marioState != State.spawn && marioState != State.dead){
-            marioState = State.idle;
-
+        if(main && !bottom && marioState != State.spawn && marioDir == Direction.right
+                && marioBody.getLinearVelocity().isZero()){
+            marioBody.setLinearVelocity(1.2f, 0f);
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && marioState != State.spawn && marioState != State.dead) {
+        if(main && !bottom && marioState != State.spawn  && marioDir == Direction.left
+                && marioBody.getLinearVelocity().isZero()){
+            marioBody.setLinearVelocity(-1.2f, 0f);
+        }
+
+        if(marioBody.getLinearVelocity().isZero() && marioState != State.spawn  && marioState != State.dead){
+            marioState = State.idle;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT) && moveToLeft) {
             marioDir = Direction.left;
             if (marioState == State.jumping) {
                 marioBody.applyForceToCenter(-250f, 0f, true);
 
             } else {
+                if(bottom)
                 marioState = State.walking;
                 marioBody.setLinearVelocity(-1.2f, 0f);
+               //  marioBody.applyLinearImpulse(new Vector2(2f, 0f), marioBody.getWorldCenter(), true);
             }
         }
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && marioState != State.spawn && marioState != State.dead) {
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT) && moveToRight) {
             marioDir = Direction.right;
             if (marioState == State.jumping) {
                 marioBody.applyForceToCenter(250f , 0f, true);
+
             } else {
+                if(bottom)
                 marioState = State.walking;
                 marioBody.setLinearVelocity(1.2f, 0f);
             }
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && marioState != State.spawn && marioState != State.dead
-                && marioState != State.jumping) {
-            if(marioState == State.walking){
-                marioBody.applyForceToCenter(0f,28000f,true);
-
-                marioState = State.jumping;
-                onGround = false;
-            }
-            if(marioState == State.idle){
-                marioBody.applyLinearImpulse(new Vector2(0, 500f), marioBody.getPosition(), true);
-                marioState = State.jumping;
-                onGround = false;
-            }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.UP) && marioState != State.jumping) {
+            marioBody.applyLinearImpulse(new Vector2(0, 500f), marioBody.getWorldCenter(), true);
+            marioState = State.jumping;
         }
-
     }
-
 
     public void refreshAnimation(){
         if(marioState == State.walking && marioDir == Direction.left){
+
             currAnimation.setFrameDuration(1/10f);
             play = true;
             currAnimation = walkingLeft;
@@ -319,21 +420,10 @@ public class MyGdxGame extends ApplicationAdapter {
 
     }
 
-    public void cleanBodies() {
-        for (int i = 0; i < bodyTrash.size(); i++) {
-            Body b = bodyTrash.remove(i);
-            if (falls.contains(b)) {
-                falls.remove(b);
-            }
-            if (!world.isLocked()) {
-                world.destroyBody(b);
-            }
-        }
-    }
-
     @Override
     public void render() {
         camera.update();
+
         world.step(Gdx.graphics.getDeltaTime(), 6, 2);
         elapsedTime += Gdx.graphics.getDeltaTime();
 
@@ -341,14 +431,10 @@ public class MyGdxGame extends ApplicationAdapter {
         refreshAnimation();
         debug();
 
-        cleanBodies();
-
-
-       // Gdx.gl.glClearColor(1, 0, 0, 1);
-
-      //  Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
         debugMatrix = batch.getProjectionMatrix().cpy().scale(pixelsToMeters, pixelsToMeters, 0);
+        test = new Vector2((marioSprite.getX()/ pixelsToMeters) + marioSprite.getWidth() * 2,
+                (marioSprite.getY() + marioSprite.getHeight() * 2));
+
         marioSprite.setPosition((marioBody.getPosition().x * pixelsToMeters) - marioSprite.getWidth() / 2,
                 (marioBody.getPosition().y * pixelsToMeters) - marioSprite.getHeight() / 2);
 
@@ -360,7 +446,7 @@ public class MyGdxGame extends ApplicationAdapter {
 
         batch.begin();
         batch.draw(currAnimation.getKeyFrame(elapsedTime,play), marioSprite.getX(), marioSprite.getY());
-        //marioSprite.draw(batch);
+
         font.draw(batch, "Debug: ", 0, 0);
         batch.end();
 
@@ -368,8 +454,7 @@ public class MyGdxGame extends ApplicationAdapter {
     }
 
     public void debug() {
-       // System.out.println("State: " + marioState + " Direction: " + marioDir);
-        //System.out.println(marioBody.getLinearVelocity());
+        // System.out.println("State: " + marioState + " Direction: " + marioDir);
     }
 
 }

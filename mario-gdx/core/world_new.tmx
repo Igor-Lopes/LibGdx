@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="20" tilewidth="32" tileheight="32" nextobjectid="315">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="20" tilewidth="32" tileheight="32" nextobjectid="210">
  <tileset firstgid="1" name="bkg3" tilewidth="32" tileheight="32">
   <image source="../tiled/bkg3.png" width="1024" height="864"/>
  </tileset>
@@ -17,20 +17,22 @@
    eJy91kWQFFcYB/BlB5fgkiPuLiFHYHF3yQlY3F2iuLtHC3fXHHEPbkfc3W/5de1OZZja3axQHH713uuu+fr7v+6emXqZYmLq04A4GtKIxjShKc1oTgta0orWtKEt7WhPBzrSic50oesXqN+N7vSgJ/H0ojd96Es/+jOAgQxiMEMYyjCGM4KRjGI0YxjLuC9QfzwTmMgkJjOFqUxjOjOYySxmM4e5zGM+C1jIIhazhKUsYzkrUqj/T8x/MlK/Y2xMzErjKlazhrWsYz0b2MgmNrOFrWxjOzvYyS52s4e97GM/B/g7ifqR/ScnpfpB39EOOn6IwxzhKMc4zglOcorTnOFs0AfnOM8FLnKJy1zhKte4zo2o+qnJEEipflI5bjp+i9vc4S73uM8DHvKIxzzhKc94zgte8orXvOEt73jPBz5G1E9thsD/1Y/OkYlYQmQmC1nJRnZykJNc5CYPX5GXfOSnAAUpRGGKUJRifB2btv6T0zM2Qbh+dI7ilKAkpShNGcpSjvJUoCKVqEwVqlKN6tSgJrWoTR2+oS7ffqYckVnCvdeNmNejPg2IoyGNaEwTmtKM5rSgJa1oTRva0o72dEis2YnOdKHrZ8wRSOrdCHSnR2LOeHrRmz70pR/9GcBABjGYIQxlGMMZwUhGMZoxjGVcRI74NGSK7jP6WNeo8xOYyCQmM4WpTGM6M5jJLGYzh7nMYz4LWMgiFrOEpSxjeQbuRXL7HvlsjQjZO0ax0noVq1nDWtaxng1sZBOb2cJWtrGdHexkF7vZw172sZ8DqcyRXM8pZQnG0fofw1gOWh/iMEc4yjGOc4KTnOI0Zzgb9MY5znOBi1ziMle4yjWucyOi/ufKEM4xTv/j+Z6b1re4zR3uco/7POAhj3jME57yjOe84CWveM0b3vKO93zgY0T94Pqdo6QnQzjHD/r/kZ/IRCwhMpOFrGQjOznISS5yk4evyEs+8lOAghSiMEUoSrFQwvvYje8SLXZsCUtDac8R7Wc1fmECxSlBSUpRmjKUpRzlqUBFKlGZKlSlGtWpQU1qUZs6dKcHPUMJ/8/DllkvZ0UoYxkiv98nq1WP+jQgjoY0onFwfZrSjOa0oCWtaB3Va3s6BL3RKdhrugT3I/Tp8/Cr9W/8no77EXm9uMQcgWlRvaR23iSNgu/zsD+s/+SvUNrfkXif6UXvUMLv0lzjPOaHPj2X2nlGcqRn38LzPvSlX+IzucC4kEVR51I7z0iO9OxbeN6fAQxMIuu/uCHwwQ==
   </data>
  </layer>
- <objectgroup color="#00aa00" name="ground">
-  <object id="264" x="0" y="545" width="414" height="23"/>
-  <object id="265" x="895" y="577" width="481" height="31"/>
-  <object id="266" x="1472" y="608" width="127" height="31"/>
+ <objectgroup color="#00ffff" name="ground">
+  <object id="2" x="2" y="545" width="413" height="93"/>
+  <object id="31" x="1473" y="610" width="125" height="28"/>
+  <object id="35" x="481" y="513" width="95" height="30"/>
+  <object id="36" x="705" y="481" width="94" height="31"/>
+  <object id="175" x="901.333" y="455.333" width="87.3333" height="34.6667"/>
+  <object id="201" x="896" y="579" width="481" height="62"/>
+  <object id="209" x="424" y="551" width="462" height="86"/>
  </objectgroup>
  <objectgroup color="#ff0000" name="fall"/>
- <objectgroup color="#aa007f" name="finish">
+ <objectgroup color="#00aa00" name="finish">
   <object id="27" x="1504" y="320" width="91" height="94"/>
   <object id="28" x="1539" y="418" width="62" height="189"/>
  </objectgroup>
- <objectgroup color="#0000ff" name="platforms">
-  <object id="311" x="480" y="511.667" width="95.6667" height="32.3333"/>
-  <object id="312" x="704.333" y="480" width="95.6667" height="32"/>
-  <object id="313" x="900.333" y="454.667" width="89.6667" height="121"/>
-  <object id="314" x="1376.33" y="512.667" width="95.6667" height="129.667"/>
+ <objectgroup color="#0000ff" name="walls">
+  <object id="204" x="907" y="493" width="77" height="83"/>
+  <object id="208" x="1376" y="513" width="95" height="126"/>
  </objectgroup>
 </map>
