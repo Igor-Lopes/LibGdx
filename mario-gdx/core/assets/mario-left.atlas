@@ -1,0 +1,26 @@
+
+mario-left.png
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+mario2
+  rotate: false
+  xy: 1, 1
+  size: 32, 54
+  orig: 32, 54
+  offset: 0, 0
+  index: -1
+mario1
+  rotate: false
+  xy: 35, 3
+  size: 32, 52
+  orig: 32, 52
+  offset: 0, 0
+  index: -1
+mario3
+  rotate: false
+  xy: 69, 1
+  size: 30, 54
+  orig: 30, 54
+  offset: 0, 0
+  index: -1

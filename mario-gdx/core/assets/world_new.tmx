@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="20" tilewidth="32" tileheight="32" nextobjectid="315">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="50" height="20" tilewidth="32" tileheight="32" nextobjectid="329">
  <tileset firstgid="1" name="bkg3" tilewidth="32" tileheight="32">
   <image source="../tiled/bkg3.png" width="1024" height="864"/>
  </tileset>
@@ -28,9 +28,9 @@
   <object id="28" x="1539" y="418" width="62" height="189"/>
  </objectgroup>
  <objectgroup color="#0000ff" name="platforms">
-  <object id="311" x="480" y="511.667" width="95.6667" height="32.3333"/>
-  <object id="312" x="704.333" y="480" width="95.6667" height="32"/>
-  <object id="313" x="900.333" y="454.667" width="89.6667" height="121"/>
-  <object id="314" x="1376.33" y="512.667" width="95.6667" height="129.667"/>
+  <object id="322" x="1375" y="512" width="101" height="126"/>
+  <object id="324" x="703" y="480" width="97" height="33"/>
+  <object id="325" x="480" y="513" width="96" height="32"/>
+  <object id="328" x="901" y="456" width="87" height="121"/>
  </objectgroup>
 </map>

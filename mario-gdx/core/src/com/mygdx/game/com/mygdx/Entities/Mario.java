@@ -2,11 +2,10 @@ package com.mygdx.game.com.mygdx.Entities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
@@ -19,6 +18,8 @@ public class Mario {
     private World world;
     private Sprite marioSprite;
     private Vector2 marioPosition;
+    private float width;
+    private float height;
     private Body marioBody;
     private ArrayList<Body> platforms;
     private ArrayList<Body> falls;
@@ -27,44 +28,58 @@ public class Mario {
     private Fixture leftSensor;
     private Fixture rightSensor;
     private Fixture bottomSensor;
-
+   // Boolean variables for sensors collision
     private boolean mainCollision;
     private boolean leftCollision;
     private boolean rightCollision;
     private boolean bottomCollision;
-
     //Animation Variables
     private Animation walkingLeft;
     private Animation walkingRight;
     private Animation currAnimation;
-    private Texture marioTexture;
+    private AssetManager assetManager = new AssetManager();
+    private TextureAtlas atlas = new TextureAtlas();
     private final String TEXTURE_PATH = "mario_sheet.png";
-    private TextureRegion[] animationFrame;
-    private boolean play;
-
-    //Mario's States
+    private float elapsedTime;
+    private boolean playAnimation;
+    //Mario's States and Directions
     private enum State {
         spawn, dead, idle, walking, jumping
     }
-
     private enum Direction {left, right}
-
     private State marioState;
     private Direction marioDir;
 
+    //Constants
     private final float PPM = 100f;
-    private float elapsedTime;
+    //private final float MAX_VELOCITY = 2f;
+
 
     public Mario(Vector2 spawnLocation, World w) {
+
+        assetManager.load("mario.pack", TextureAtlas.class);
+        assetManager.finishLoading();
+        atlas = assetManager.get("mario.pack");
+        marioSprite = new Sprite(atlas.findRegion("mario1"));
+        marioSprite.setPosition(spawnLocation.x, spawnLocation.y);
+
+        Texture test = new Texture("m.png");
+        test.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+
+
+        marioSprite = new Sprite(test);
+        marioSprite.setPosition(spawnLocation.x, spawnLocation.y);
+
+
+        width = 32;
+        height = 52;
+        setAnimations();
         world = w;
         marioPosition = spawnLocation;
 
-        setAnimations();
-        refreshAnimation();
-        play = true;
         initStates();
 
-        marioBody = CreateBodies.createBody(spawnLocation, marioSprite.getWidth(), marioSprite.getHeight(), 700f, 0, 1,
+        marioBody = CreateBodies.createBody(spawnLocation, marioSprite.getWidth(), marioSprite.getHeight() , 700f, 0, 0.90f,
                 BodyDef.BodyType.DynamicBody, world, true);
         mainSensor = (Fixture) marioBody.getUserData();
         leftSensor = CreateBodies.createBoxSensor(marioBody, marioSprite.getWidth() / 16 / PPM,
@@ -89,67 +104,46 @@ public class Mario {
     }
 
     private void setAnimations() {
-        marioTexture = new Texture("mario_sheet.png");
-        TextureRegion[][] tmpFrames = TextureRegion.split(marioTexture, marioTexture.getWidth() / 3,
-                marioTexture.getHeight() / 2);
-        animationFrame = new TextureRegion[3];
 
-        int index = 0;
-        for (int i = 0; i < 1; i++) {
-            for (int j = 0; j < 3; j++) {
-                animationFrame[index++] = tmpFrames[i][j];
-            }
-        }
+        walkingRight =  new Animation(1/12f, atlas.getRegions());
 
-        marioSprite = new Sprite(tmpFrames[0][0]);
-        marioSprite.setPosition(100, 225);
-        walkingRight = new Animation(1 / 10f, animationFrame);
+        assetManager.load("mario_left.pack", TextureAtlas.class);
+        assetManager.finishLoading();
+        atlas = assetManager.get("mario_left.pack");
+        walkingLeft =  new Animation(1/12f, atlas.getRegions());
 
-        animationFrame = new TextureRegion[3];
-
-        index = 0;
-        for (int i = 1; i < 2; i++) {
-            for (int j = 0; j < 3; j++) {
-                animationFrame[index++] = tmpFrames[i][j];
-            }
-        }
-
-        walkingLeft = new Animation(1 / 10f, animationFrame);
 
         currAnimation = walkingRight;
-        play = true;
-        currAnimation = walkingRight;
-
     }
 
     public void refreshAnimation() {
         if (marioState == State.walking && marioDir == Direction.left) {
 
-            currAnimation.setFrameDuration(1 / 10f);
-            play = true;
+            currAnimation.setFrameDuration(1 / 12f);
+            playAnimation = true;
             currAnimation = walkingLeft;
         }
         if (marioState == State.walking && marioDir == Direction.right) {
-            currAnimation.setFrameDuration(1 / 10f);
-            play = true;
+            currAnimation.setFrameDuration(1 / 12f);
+            playAnimation = true;
             currAnimation = walkingRight;
         }
         if (marioState == State.idle && marioDir == Direction.left) {
             currAnimation = walkingLeft;
-            play = false;
+            playAnimation = false;
         }
         if (marioState == State.idle && marioDir == Direction.right) {
             currAnimation = walkingRight;
-            play = false;
+            playAnimation = false;
         }
         if (marioState == State.jumping && marioDir == Direction.left) {
             currAnimation = walkingLeft;
-            play = true;
+            playAnimation = true;
             currAnimation.setFrameDuration(0f);
         }
         if (marioState == State.jumping && marioDir == Direction.right) {
             currAnimation = walkingRight;
-            play = true;
+            playAnimation = true;
             currAnimation.setFrameDuration(0f);
         }
 
@@ -238,7 +232,13 @@ public class Mario {
         });
     }
 
-    public void update() {
+    public void updateSprite(){
+        marioSprite.setPosition((marioBody.getWorldCenter().x * PPM) - marioSprite.getWidth() / 2,
+                (marioBody.getWorldCenter().y * PPM ) - marioSprite.getHeight() / 2);
+    }
+
+    public void update(float delta) {
+
         if (mainCollision && !bottomCollision && marioState != State.spawn && marioDir == Direction.right
                 && marioBody.getLinearVelocity().isZero()) {
             marioBody.setLinearVelocity(1.2f, 0f);
@@ -264,6 +264,7 @@ public class Mario {
             marioDir = Direction.left;
             if (marioState == State.jumping) {
                 marioBody.applyForceToCenter(-250f, 0f, true);
+
             } else {
                 marioState = State.walking;
                 marioBody.setLinearVelocity(-1.2f, 0f);
@@ -281,12 +282,35 @@ public class Mario {
     }
 
     public void render(SpriteBatch batch) {
+
+
         elapsedTime += Gdx.graphics.getDeltaTime();
+
         refreshAnimation();
 
-        marioSprite.setPosition((marioBody.getPosition().x * PPM) - marioSprite.getWidth() / 2,
-                (marioBody.getPosition().y * PPM) - marioSprite.getHeight() / 2);
-        batch.draw(currAnimation.getKeyFrame(elapsedTime, play), marioSprite.getX(), marioSprite.getY());
+        updateSprite();
+        batch.draw(currAnimation.getKeyFrame(elapsedTime, playAnimation), marioSprite.getX(), marioSprite.getY());
+        //batch.draw(marioSprite, Math.round(marioSprite.getX()),Math.round(marioSprite.getY()) );
+       // marioSprite.draw(batch);
+
+    }
+
+    public void setLeftCollision(boolean status){
+        leftCollision = status;
+    }
+
+    public void setRightCollision(boolean status){
+        rightCollision = status;
+    }
+
+    public void setBottomCollision(boolean status){
+        bottomCollision = status;
+    }
+
+
+    public void dispose(){
+        atlas.dispose();
+        assetManager.dispose();
 
     }
 
@@ -294,35 +318,4 @@ public class Mario {
 
         return marioBody;
     }
-
-    public Fixture getMainSensor() {
-
-        return mainSensor;
-    }
-
-    public Fixture getLeftSensor() {
-
-        return leftSensor;
-    }
-
-    public Fixture getRightSensor() {
-
-        return rightSensor;
-    }
-
-    public Fixture getBottomSensor() {
-
-        return bottomSensor;
-    }
-
-    public Animation getAnimation() {
-
-        return currAnimation;
-    }
-
-    public Vector2 getMarioPos() {
-
-        return marioPosition;
-    }
-
 }

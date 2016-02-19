@@ -90,9 +90,8 @@ public class CreateBodies {
         shape.setAsBox(w, h, position, angle);
         fDef.isSensor = true;
         fDef.shape = shape;
-
         fixture = body.createFixture(fDef);
-
+        shape.dispose();
         return fixture;
     }
 }
